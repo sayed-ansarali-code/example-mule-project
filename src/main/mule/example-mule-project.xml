@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="df7d06e8-1984-4af5-8fef-549936dec550" >
+		<db:oracle-connection host="localhost" user="ansar" password="ansar" instance="orcl" />
+	</db:config>
+	<db:config name="oracle_config1" doc:name="Database Config" doc:id="23f774d8-f30c-4878-b081-82e370a0092a" >
+		<db:oracle-connection host="localhost" user="ansar" password="ansar" instance="orcl" />
+	</db:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="e1e2b53c-4a68-4057-8bbf-4f93b0e7d99a" >
+		<http:request-connection host="localhost" port="8080" />
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e9131cb3-e3d4-4af7-8799-920fa3194128" >
+		<http:listener-connection host="localhost" port="8080" />
+	</http:listener-config>
+	<flow name="example-mule-projectFlow" doc:id="c5d3444d-672d-4714-a821-39b4e46c7f84" >
+		<http:listener doc:name="http_listener" doc:id="c0607740-77fc-43c8-a189-7f6a62aaeefd" config-ref="HTTP_Listener_config" path="/oracle.csv"/>
+		<db:select doc:name="Select" doc:id="78425364-cdaa-4a0d-9920-7a70ddcb58dd" config-ref="oracle_config1">
+			<db:sql ><![CDATA[select * from person]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="6d99f365-71ed-4820-9d52-896f7f085bdf" >
+			<ee:message >
+<ee:set-payload ><![CDATA[%dw 2.0
+input payload application/java
+output application/csv separator=","
+---
+payload map {
+  PERSONID: $.PERSONID,
+  FIRSTNAME: $.FIRSTNAME,
+  LASTNAME: $.LASTNAME
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5fed1d1d-b21c-41de-adfb-8d9338204808" />
+	</flow>
+</mule>
