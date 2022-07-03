@@ -2,7 +2,7 @@
 A Mule flow that queries database upon receiving http request and returns resultset in csv format
 
 # Prerequisites
-1. Google search and download Mule Anypoint Studio. It's nothing but Eclipse editor with special features and support for Mule project development.
+1. Google search and download Mule Anypoint Studio. It's nothing but Eclipse editor with special features and support for Mule project development. Its 30 days trial version available after filling out basic info [here](https://www.mulesoft.com/lp/dl/studio).
 2. Create a database in Oracle with a table as per below structure.
 ```
 CREATE TABLE Person (
